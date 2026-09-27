@@ -1,0 +1,18 @@
+# Environment
+.env
+
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# Local vector database
+data/chroma/
+
+# macOS
+.DS_Store
