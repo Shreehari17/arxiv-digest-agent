@@ -3,19 +3,31 @@ from src.state import initial_state
 
 
 def main():
-    user_input = input("Enter a research topic or arXiv ID: ").strip()
+    print("\n" + "=" * 60)
+    print("              PAPER ID/URL OR TOPIC TO RESEARCH")
+    print("=" * 60)
 
-    if not user_input:
-        print("Please enter something.")
+    user_input = input("❯ ").strip()
+
+    if user_input.lower() in {"quit", "exit"}:
+        print("\n" + "=" * 60)
+        print("                       SESSION ENDED")
+        print("=" * 60)
         return
 
     graph = build_graph()
     state = initial_state(user_input)
 
-    final_state = graph.invoke(state)
+    try:
+        final_state = graph.invoke(state)
 
-    if final_state.get("error"):
-        print(f"\nError: {final_state['error']}")
+        if final_state.get("error"):
+            print(f"\nError: {final_state['error']}")
+
+    except KeyboardInterrupt:
+        print("\n\n" + "=" * 60)
+        print("                       SESSION ENDED")
+        print("=" * 60)
 
 
 if __name__ == "__main__":

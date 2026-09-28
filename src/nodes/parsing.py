@@ -2,7 +2,7 @@ import logging
 import tempfile
 from pathlib import Path
 
-import fitz
+import pymupdf
 import requests
 
 from src.state import AgentState
@@ -73,7 +73,7 @@ def fetch_and_parse(state: AgentState) -> dict:
             pdf_path = Path(tmp_dir) / "paper.pdf"
             pdf_path.write_bytes(pdf_bytes)
 
-            doc = fitz.open(pdf_path)
+            doc = pymupdf.open(pdf_path)
 
     except Exception as exc:
         return {

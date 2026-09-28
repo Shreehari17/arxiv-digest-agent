@@ -2,14 +2,14 @@ import logging
 from pathlib import Path
 
 import chromadb
-from chromadb.utils import embedding_functions
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
 
 logger = logging.getLogger(__name__)
 
 _PERSIST_DIR = Path(__file__).resolve().parent.parent / "data" / "chroma"
 
-_EMBEDDING_MODEL_NAME = "all-mpnet-base-v2" 
+_EMBEDDING_MODEL_NAME = "all-mpnet-base-v2"
 
 _client = None
 _embedding_fn = None
@@ -31,11 +31,8 @@ def _get_embedding_fn():
     global _embedding_fn
 
     if _embedding_fn is None:
-        _embedding_fn = (
-            embedding_functions
-            .SentenceTransformerEmbeddingFunction(
-                model_name=_EMBEDDING_MODEL_NAME
-            )
+        _embedding_fn = SentenceTransformerEmbeddingFunction(
+            model_name=_EMBEDDING_MODEL_NAME
         )
 
     return _embedding_fn

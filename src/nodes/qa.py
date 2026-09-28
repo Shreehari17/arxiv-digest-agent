@@ -126,10 +126,10 @@ def qa_loop(state: AgentState) -> dict:
             for question in briefing.follow_up_questions:
                 print(f"- {question}")
 
-    user_input = input(
-        "\nAsk a question or command "
-        "(/paper <ID/topic>, /quit): "
-    ).strip()
+    print("\n" + "=" * 60)
+    print("                       YOUR QUESTION")
+    print("=" * 60)
+    user_input = input("❯ ").strip()
 
 
     if not user_input or user_input.lower() in {"/quit", "quit", "exit"}:
