@@ -6,6 +6,28 @@ An agent that takes a research topic or an arXiv paper ID/URL, resolves it to a 
 
 Input is either a topic (`"KV-cache compression for LLMs"`) or an arXiv ID/URL (`1706.03762`, `https://arxiv.org/abs/1706.03762`). The agent resolves it to one paper, chunks and embeds the paper into a local Chroma store, prints a briefing, and then enters a Q&A loop where every answer is built from chunks retrieved from that paper.
 
+
+## Demo
+
+### 1. Paper Input & Briefing
+
+The agent accepts an arXiv paper ID, URL, or research topic and generates a structured briefing from the selected paper.
+
+![Paper input and briefing](assets/paper-briefing.png)
+
+### 2. Grounded Question Answering
+
+Follow-up questions are answered using retrieved excerpts from the selected paper, with the supporting chunk numbers shown in the response.
+
+![Grounded question answering](assets/grounded-qa.png)
+
+### 3. Handling Unsupported Questions
+
+When the paper does not contain relevant information, the agent returns a deterministic "not found" response instead of relying on the LLM to guess.
+
+![Unsupported question handling](assets/unsupported-question.png)
+
+
 ## Features
 
 - Regex-based classification of topic vs. paper ID/URL (no LLM call for this step)
