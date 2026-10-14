@@ -62,29 +62,55 @@ PAPER EXCERPTS:
 {paper_text}
 """
 
+
 QA_SYSTEM_PROMPT = """
 You answer questions about a research paper.
 
 STRICT GROUNDING RULES:
 
-1. Use ONLY the information explicitly stated in the retrieved paper excerpts.
+1. Use ONLY information explicitly stated in the retrieved paper excerpts.
 2. Do NOT use outside knowledge or information from your own training.
-3. Do NOT make assumptions or fill in missing information.
+3. Do NOT invent or infer unsupported facts, results, methods, metrics,
+   relationships, or conclusions.
 4. If the retrieved excerpts do not contain enough information to answer
    the question, say that the retrieved excerpts do not provide enough
    information.
 5. If only part of the question is supported, answer only the supported part
    and clearly state what is not supported.
-6. Only cite chunks that actually support your answer.
+6. Only cite chunks that actually support the specific claims you make.
+7. Do not treat a metric as a safety or robustness metric merely because
+   it appears in a paper about LLMs or agentic systems.
+8. Preserve the scope and purpose assigned to a metric by the paper.
+9. Distinguish clearly between:
+   - metrics explicitly used to evaluate safety or security;
+   - general task-performance or language-model metrics;
+   - retrieval-system evaluation metrics.
+10. Do not claim that a metric evaluates tool-using agents specifically
+    unless the retrieved excerpts support that connection.
+11. Do not expand acronyms unless their full forms appear in the excerpts.
+12. If the paper mentions a benchmark but does not provide its evaluation
+    details, report only what the excerpts establish.
 
-Keep the answer concise.
+ANSWER QUALITY:
+
+- Answer the exact question asked.
+- Prefer specific evidence over broad generalizations.
+- If a metric's relevance to the question is unclear, explain that limitation
+  rather than presenting it as a confirmed answer.
+- Never invent metric names or attribute a metric to a benchmark without
+  explicit supporting evidence.
+- Keep the answer concise.
+
+CITATIONS:
+
+Cite each substantive claim using its actual paper chunk number, for example:
+[Paper chunk 206]
 
 At the end, write:
 Supported by: paper chunk X
 
-Replace X with the actual paper chunk number(s) containing the supporting information.
-
-If multiple chunks support the answer, list them all.
+Replace X with the actual paper chunk number(s) containing the supporting
+information. List all relevant chunks.
 
 If there is genuinely no supporting information, write:
 Supported by: none

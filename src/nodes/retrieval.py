@@ -1,5 +1,6 @@
 from typing import TypedDict
 import re
+import os
 from src.vectorstore import (
     collection_exists_and_populated,
     collection_name_for,
@@ -16,7 +17,7 @@ _MIN_CHUNK_CHARS = 50
 _DEFAULT_K = 4
 
 
-_QA_K = 8
+_QA_K = 15
 _QA_DISTANCE_THRESHOLD = 0.65
 
 
@@ -137,7 +138,11 @@ def chunk_and_embed(state) -> dict:
     paper = state["selected_paper"]
     raw_text = state["raw_text"]
 
-    collection_name = collection_name_for(paper.arxiv_id)
+
+    collection_name = os.getenv(
+    "ARXIV_COLLECTION_OVERRIDE",
+    collection_name_for(paper.arxiv_id),
+    )
 
 
     if collection_exists_and_populated(collection_name):
@@ -288,22 +293,24 @@ def retrieve_for_qa(
         matches = find_term_in_chunks(vectorstore_ref, term)
         lexical_chunks.extend(matches)
 
+    
     merged = []
     seen_texts = set()
 
-
+    # Add semantic candidates first.
     for chunk in semantic_candidates:
         if chunk["text"] not in seen_texts:
             seen_texts.add(chunk["text"])
             merged.append(chunk)
 
-
+    # Add lexical matches afterward.
     for chunk in lexical_chunks:
         if chunk["text"] not in seen_texts:
             seen_texts.add(chunk["text"])
             merged.append(chunk)
 
-    return merged[:8]
+    return merged[:12]
+
 
 def retrieve_for_query(state) -> dict:
     """Run an initial retrieval stage for the graph."""
@@ -320,3 +327,122 @@ def retrieve_for_query(state) -> dict:
     return {
         "retrieved_chunks": chunks,
     }
+
+
+def retrieve_for_qa_hybrid(
+    vectorstore_ref: str,
+    question: str,
+    k: int = 12,
+) -> list[RetrievedChunk]:
+    """
+    Hybrid retrieval using semantic search, BM25, and RRF.
+    Keeps the existing retrieve_for_qa() unchanged.
+    """
+    import math
+    from collections import Counter
+
+    if not question.strip():
+        return []
+
+    # 1. Semantic retrieval
+    semantic_chunks = retrieve(
+        vectorstore_ref,
+        question,
+        k=max(k, 20),
+    )
+
+    # 2. Load the collection for keyword retrieval
+    collection = get_or_create_collection(vectorstore_ref)
+    data = collection.get(include=["documents", "metadatas"])
+
+    documents = data.get("documents") or []
+    metadatas = data.get("metadatas") or []
+
+    if not documents:
+        return semantic_chunks[:k]
+
+    def tokenize(text: str) -> list[str]:
+        return re.findall(r"[a-z0-9]+", text.lower())
+
+    tokenized_docs = [tokenize(doc) for doc in documents]
+    query_terms = set(tokenize(question))
+
+    n_docs = len(tokenized_docs)
+    doc_lengths = [len(doc) for doc in tokenized_docs]
+    avgdl = sum(doc_lengths) / n_docs or 1.0
+
+    document_frequency = Counter()
+    term_frequencies = []
+
+    for tokens in tokenized_docs:
+        frequencies = Counter(tokens)
+        term_frequencies.append(frequencies)
+        document_frequency.update(frequencies.keys())
+
+    # 3. BM25 ranking
+    bm25_scores = []
+    k1, b = 1.5, 0.75
+
+    for index, frequencies in enumerate(term_frequencies):
+        score = 0.0
+        doc_length = doc_lengths[index]
+
+        for term in query_terms:
+            tf = frequencies.get(term, 0)
+            if tf == 0:
+                continue
+
+            df = document_frequency[term]
+            idf = math.log(
+                1 + (n_docs - df + 0.5) / (df + 0.5)
+            )
+            denominator = tf + k1 * (
+                1 - b + b * doc_length / avgdl
+            )
+            score += idf * (
+                tf * (k1 + 1) / denominator
+            )
+
+        if score > 0:
+            bm25_scores.append((score, index))
+
+    bm25_scores.sort(key=lambda item: item[0], reverse=True)
+    lexical_indices = [index for _, index in bm25_scores[:20]]
+
+    # 4. Reciprocal Rank Fusion
+    rrf_scores = {}
+    chunks_by_id = {}
+
+    def add_ranked_chunks(chunks):
+        for rank, chunk in enumerate(chunks, start=1):
+            chunk_id = chunk["metadata"].get("chunk_index")
+            if chunk_id is None:
+                continue
+
+            rrf_scores[chunk_id] = rrf_scores.get(chunk_id, 0.0) + (
+                1.0 / (60 + rank)
+            )
+            chunks_by_id.setdefault(chunk_id, chunk)
+
+    add_ranked_chunks(semantic_chunks)
+
+    lexical_chunks = [
+        RetrievedChunk(
+            text=documents[index],
+            metadata=metadatas[index] or {},
+            distance=float("inf"),
+        )
+        for index in lexical_indices
+    ]
+    add_ranked_chunks(lexical_chunks)
+
+    ranked_ids = sorted(
+        rrf_scores,
+        key=lambda chunk_id: rrf_scores[chunk_id],
+        reverse=True,
+    )
+
+    return [
+        chunks_by_id[chunk_id]
+        for chunk_id in ranked_ids[:k]
+    ]

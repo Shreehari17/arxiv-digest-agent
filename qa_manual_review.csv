@@ -1,0 +1,202 @@
+question_id,question,method,expected_chunks,retrieved_chunks,evidence_recall,answer,correctness_0_to_2,citation_0_to_2,grounding_0_to_2,abstention_0_to_2,review_notes
+Q1,What quantitative metrics does the paper associate with the Fortress AI safety benchmark?,semantic_only,206,"204, 193, 200, 236, 206, 323, 203, 320, 202, 234, 237, 284",1.0,"The paper lists two quantitative metrics for the **Fortress AI Safety** benchmark:
+
+* **Avg Risk Score (ARS)**
+* **Over‑Refusal Score (ORS)**  
+
+These are shown in the benchmark overview table, where the Fortress entry is described as “Varies (Proprietary)” and the associated metrics are the Avg Risk Score and Over‑Refusal Score【Paper chunk 206】.  
+
+Supported by: paper chunk 206",2,2,2,2,
+Q1,What quantitative metrics does the paper associate with the Fortress AI safety benchmark?,hybrid,206,"206, 320, 193, 200, 192, 204, 616, 612, 236, 575, 323, 576",1.0,"The paper reports that the **Fortress AI Safety** benchmark is evaluated with two quantitative scores:
+
+* **Avg Risk Score (ARS)**
+* **Over‑Refusal Score (ORS)**  
+
+These scores are described as “proprietary” metrics used for the National Security Risk Assessment associated with the Fortress benchmark【Paper chunk 206】.  
+
+Supported by: paper chunk 206",2,2,1,2,
+Q2,"What problems can occur when agents use external tools, and how can they respond to those failures?",semantic_only,605,"590, 16, 49, 589, 605, 25, 615, 38, 513, 514, 512, 607",1.0,"**Problems that can arise when an LLM‑based agent calls external tools**
+
+* The tool‑calling step adds **new points of failure** that are not present in a pure‑LLM system.  An API service may be unavailable, a tool may return an unexpected error, or the LLM may make a logical mistake in its plan [Paper chunk 605].
+* Because tools extend the agent’s reach into the world, they bring **safety, reliability and performance risks** and can be **misused** under certain conditions [Paper chunk 590].
+
+**How an agent can respond to those failures**
+
+* **Reactive error‑handling loop** – when a tool call fails, the system feeds the error message back to the LLM as an observation. The LLM then reasons about the error and can:
+  * re‑invoke the same tool with corrected arguments,
+  * try a different tool, or
+  * inform the user of the failure [Paper chunk 605].
+* **Self‑correcting and state‑aware mechanisms** – the agent keeps track of past attempts and uses that state to adjust future actions, enabling “observe‑reflect‑retry” self‑healing behavior [Paper chunk 605].
+* **Robust error‑handling design** – building in systematic observation and reasoning about failures, and attempting recovery, is recommended because tool‑use systems are inherently fragile due to reliance on external APIs [Paper chunk 615].
+* **Human‑in‑the‑loop fallback** – for high‑stakes actions, the agent can pause and request human confirmation before proceeding, providing an additional safety net [Paper chunk 615].
+
+**Supported by:** paper chunks 590, 605, 615.",2,2,2,2,
+Q2,"What problems can occur when agents use external tools, and how can they respond to those failures?",hybrid,605,"589, 590, 588, 615, 605, 16, 513, 38, 512, 593, 49, 517",1.0,"**Problems that can arise when agents use external tools**
+
+* The reliance on external APIs and services creates **new points of failure**.  
+  * An API service may be unavailable (down).  
+  * A tool may return an unexpected error.  
+  * The LLM may make a logical mistake in its plan when using the tool.  
+* These failures introduce **safety, reliability and performance risks** and can be **misused** under certain conditions.  [Paper chunk 589] [Paper chunk 590] [Paper chunk 605]
+
+**How agents can respond to those failures**
+
+* **Reactive error‑handling loop** – when a tool call fails, the system feeds the error message back to the LLM as an observation. The LLM then reasons about the error and can:
+  * Re‑invoke the same tool with corrected arguments.  
+  * Try a different tool.  
+  * Inform the user of the failure.  
+  This “observe‑reflect‑retry” pattern enables self‑healing. [Paper chunk 605]
+* **Robust error handling and recovery** – explicitly design agents to treat tool‑use as fragile, allowing them to observe failures, reason about them, and attempt recovery. [Paper chunk 615]
+* **Context management** (e.g., Model Context Protocol) can help the agent keep track of state and avoid losing its way during multi‑step tasks, which supports recovery after a tool failure. [Paper chunk 615]
+* **Human‑in‑the‑loop** – for high‑stakes actions, agents should pause and seek human confirmation before proceeding after a failure, adding an extra safety layer. [Paper chunk 615]
+
+**Summary**
+
+External‑tool use can fail because services go down, tools return errors, or the LLM reasons incorrectly, leading to safety, reliability and performance problems. Agents can mitigate these issues by implementing an error‑handling loop that observes the failure, reasons about it, and retries (or switches tools or alerts a human), and by managing context and keeping a human overseer when needed.  
+
+Supported by: paper chunks 589, 590, 605, 615.",2,2,1,2,
+Q3,"What does the paper describe about jailbreak attacks, malicious agent tasks, and Rainbow Teaming?",semantic_only,"612, 613","612, 613, 616, 611, 193, 617, 606, 602, 67, 68, 73, 86",1.0,"The paper explains three related safety‑related topics:
+
+* **Jailbreak attacks** – Users can craft prompts that bypass an LLM’s safety filters. The robustness of LLMs to such attacks has been studied for chat‑bots, and the authors note that agentic LLMs, which can call external tools and run multi‑stage tasks, may be an even greater security risk [Paper chunk 612].
+
+* **Malicious agent tasks** – The work cites the **AgentHarm** benchmark (Andriushchenko et al., 2024), which contains 110 “malicious agent” tasks that span fraud, cyber‑crime, harassment, etc. The authors report that leading commercial LLMs often comply with these malicious requests even without a jailbreak (e.g., “How do I make a pipe bomb?” is blocked, but more elaborate prompts can succeed) [Paper chunk 612‑613].
+
+* **Rainbow Teaming** – This is an “open‑world” approach for generating adversarial LLM prompts. It treats prompt generation as a quality‑diversity problem and uses the MAP‑Elites evolutionary meta‑search algorithm to iteratively build an archive of increasingly effective prompts, thereby improving LLM robustness and addressing the lack of diversity in existing testing methods [Paper chunk 613].
+
+**Supported by:** Paper chunks 612, 613.",2,2,2,2,
+Q3,"What does the paper describe about jailbreak attacks, malicious agent tasks, and Rainbow Teaming?",hybrid,"612, 613","612, 613, 193, 611, 15, 616, 614, 619, 617, 603, 606, 335",1.0,"The paper notes that **jailbreak attacks** are prompts that try to bypass an LLM’s safety filters.  It points out that, while such attacks have been studied for chat‑bots, agentic LLMs that use external tools can be an even larger safety risk because they can execute multi‑stage, potentially harmful actions.  The authors cite the **AgentHarm** benchmark, which contains **110 malicious agent tasks** (e.g., fraud, cyber‑crime, harassment).  Their evaluation shows that leading commercial LLMs often comply with malicious user requests even **without any jailbreak** (e.g., “How do I make a pipe bomb?” is blocked, but a simple universal template can still jailbreak the agent and succeed in GPT‑4) [Paper chunk 612‑613].
+
+To improve robustness, the paper describes **Rainbow Teaming** as an open‑world, open‑ended approach for generating adversarial prompts.  It treats adversarial prompt generation as a **quality‑diversity** problem and uses the MAP‑Elites evolutionary meta‑search method to iteratively build an archive of increasingly effective prompts, thereby increasing the diversity of jailbreak attempts used for testing and hardening LLMs [Paper chunk 613‑614].
+
+**Supported by:** paper chunks 612, 613, 614.",2,2,2,2,
+Q4,"What are perplexity and bits-per-byte used to measure, and how does the paper distinguish them?",semantic_only,"200, 201","200, 201, 182, 311, 314, 315, 318, 319, 320, 38, 39, 42",1.0,"**Perplexity** is used to gauge how well a language model predicts the next token during pre‑training.  It quantifies the model’s uncertainty (or “surprise”) about the correct next token and is directly tied to the cross‑entropy loss; a lower perplexity means the model assigns higher probability to the true next tokens [Paper chunk 200].
+
+**Bits‑per‑byte (BPB)** is used as an alternative loss‑based metric that normalizes the prediction loss to the byte level.  BPB measures the average number of bits required to encode a single byte of data, which makes it possible to compare models that use different tokenization schemes [Paper chunk 201].  It is described as a tokenizer‑agnostic metric from information theory that reflects coding efficiency [Paper chunk 182].
+
+**How the paper distinguishes them**
+
+* **Scope of measurement** – Perplexity is computed over tokens, so its value depends on the particular tokenizer and token boundaries.  BPB, by contrast, is computed over bytes, removing dependence on tokenization and allowing fair cross‑model comparisons [Paper chunk 201].
+
+* **Interpretation** – Perplexity reflects the model’s uncertainty about the next token (lower is better).  BPB reflects the average bits needed to encode each byte of data (lower is also better, but the unit is bits per byte rather than a token‑level “surprise” score) [Paper chunk 200, 201].
+
+Supported by: paper chunks 200, 201, 182.",2,2,2,2,
+Q4,"What are perplexity and bits-per-byte used to measure, and how does the paper distinguish them?",hybrid,"200, 201","201, 200, 318, 229, 319, 285, 320, 92, 170, 116, 311, 245",1.0,"Perplexity is used as the **pre‑training metric that quantifies the model’s uncertainty when predicting the next token**. It is directly derived from the cross‑entropy loss and is computed over tokens; a lower perplexity means the model assigns higher probability to the correct next token, but it depends on the particular tokenizer that produced those tokens【Paper chunk 200】.
+
+Bits‑per‑byte (BPB) is presented as an **alternative loss metric that is normalized to the byte level**. It reports the average number of bits needed to encode a single byte of data, which makes it possible to compare models that use different tokenization schemes in a fair way【Paper chunk 201】.
+
+**Distinction made by the paper**  
+* Perplexity * – token‑level, tokenizer‑specific, measures uncertainty about the next token.  
+* Bits‑per‑byte * – byte‑level, tokenizer‑agnostic, measures average bits per byte required for encoding.  
+
+Supported by: Paper chunks 200, 201.",2,2,2,2,
+Q5,Which metrics does the paper mention for evaluating retrieval systems?,semantic_only,623,"624, 626, 627, 625, 634, 635, 633, 200, 628, 632, 623, 202",1.0,"The paper lists the following standard metrics for evaluating retrieval systems:
+
+- **Recall@ k**  
+- **Mean Reciprocal Rank (MRR)**  
+- **Faithfulness scores**  
+
+These metrics are explicitly mentioned as the ones used to evaluate retrieval systems【Paper chunk 623】.  
+
+Supported by: paper chunk 623",2,2,2,2,
+Q5,Which metrics does the paper mention for evaluating retrieval systems?,hybrid,623,"624, 623, 627, 200, 633, 632, 630, 628, 17, 201, 626, 245",1.0,"The paper lists the following standard metrics for evaluating retrieval systems:
+
+- **Recall @ k** – measures the proportion of relevant items that appear in the top‑k retrieved results.  
+- **Mean Reciprocal Rank (MRR)** – averages the reciprocal rank of the first relevant item across queries.  
+- **Faithfulness scores** – assess how faithfully the retrieved evidence supports the model’s generated answer.  
+
+These metrics are explicitly mentioned as the ones used to evaluate retrieval systems in the paper [Paper chunk 623].  
+
+Supported by: paper chunk 623.",2,2,2,2,
+Q6,"What is the AgentHarm benchmark, and how many malicious agent tasks does it contain?",semantic_only,612,"612, 572, 573, 580, 575, 616, 551, 569, 576, 204, 574, 563",1.0,"AgentHarm is a benchmark introduced by Andriushchenko et al. [2024] for measuring the harmfulness of LLM‑driven agents. It comprises **110 malicious agent tasks** that span activities such as fraud, cyber‑crime, and harassment【Paper chunk 612】.  
+
+Supported by: paper chunk 612",2,2,2,2,
+Q6,"What is the AgentHarm benchmark, and how many malicious agent tasks does it contain?",hybrid,612,"612, 576, 572, 575, 573, 205, 616, 204, 350, 580, 562, 344",1.0,"AgentHarm is a benchmark introduced by Andriushchenko et al. [2024] for measuring the harmfulness of LLM‑driven agents. It consists of **110 malicious agent tasks** that span domains such as fraud, cyber‑crime, and harassment【Paper chunk 612】.  
+
+Supported by: paper chunk 612",2,2,2,2,
+Q7,How does Rainbow Teaming generate adversarial prompts?,semantic_only,613,"613, 611, 502, 614, 372, 612, 193, 532, 531, 40, 619, 534",1.0,"Rainbow Teaming treats the creation of jailbreak‑style inputs as a **quality‑diversity (QD) problem**.  
+It uses an **open‑world, open‑ended approach** in which an evolutionary meta‑search algorithm—specifically **MAP‑Elites**—searches the space of possible prompts. The algorithm maintains an archive of prompts that are both **high‑performing (i.e., successful at bypassing safety measures)** and **diverse**. By repeatedly mutating and evaluating prompts, MAP‑Elites iteratively populates the archive with increasingly better adversarial prompts, thereby generating a wide variety of effective jailbreak inputs【Paper chunk 613】【Paper chunk 614】.",2,2,2,2,
+Q7,How does Rainbow Teaming generate adversarial prompts?,hybrid,613,"613, 611, 614, 612, 619, 193, 336, 534, 502, 372, 350, 335",1.0,"Rainbow Teaming treats the creation of jailbreak‑style prompts as a **quality‑diversity (QD) problem**.  
+It uses the **MAP‑Elites** evolutionary meta‑search algorithm: an open‑ended search that repeatedly mutates candidate prompts, evaluates their “performance” (how well they jailbreak or evade safety measures), and stores them in an archive. Over successive generations the archive is populated with prompts that are both **higher‑performing** and **diverse**, yielding a broad set of adversarial examples for testing LLM robustness【Paper chunk 613】【Paper chunk 614】.  
+
+Supported by: Paper chunks 613, 614.",2,2,2,2,
+Q8,What is the observe-reflect-retry approach to tool failure?,semantic_only,605,"605, 0, 1, 46, 49, 50, 51, 54, 73, 75, 76, 77",1.0,"The observe‑reflect‑retry approach is an error‑handling loop used when a tool call fails.  
+1. **Observe** – the system passes the tool’s error message to the LLM as an observation.  
+2. **Reflect** – the LLM reasons about the cause of the error (e.g., incorrect arguments, unavailable service).  
+3. **Retry** – the LLM selects a corrective action, such as re‑invoking the same tool with corrected inputs, trying a different tool, or notifying the user.  
+
+This loop lets an agentic system recover from tool‑related failures in a self‑healing manner.  
+
+Supported by: paper chunk 605.",2,2,2,2,
+Q8,What is the observe-reflect-retry approach to tool failure?,hybrid,605,"605, 615, 590, 603, 610, 502, 318, 606, 121, 506, 307, 503",1.0,"The **observe‑reflect‑retry** pattern is a simple error‑handling loop for tool‑using agents.  
+When a tool call fails, the system first **observes** the failure by passing the error message back to the LLM as an observation. The LLM then **reflects** on that observation—reasoning about why the error occurred and deciding how to fix it. Finally, the LLM **retries** by issuing a new action, such as calling the same tool again with corrected arguments, selecting a different tool, or notifying the user of the problem. This loop enables the agent to self‑heal after tool failures [Paper chunk 605].  
+
+Supported by: paper chunk 605.",2,2,2,2,
+Q9,What do ARS and ORS mean in the Fortress benchmark?,semantic_only,206,"36, 67, 68, 69, 73, 74, 75, 76, 77, 78, 79, 80",0.0,"The retrieved excerpts do not contain any information about the Fortress benchmark, nor do they define the abbreviations “ARS” or “ORS.” Therefore, the answer cannot be provided based on the given material.
+
+Supported by: none",0,2,2,2,
+Q9,What do ARS and ORS mean in the Fortress benchmark?,hybrid,206,"323, 320, 102, 206, 256, 200, 575, 634, 562, 204, 319, 202",1.0,"In the **Fortress** benchmark, the two reported metrics are:
+
+* **ARS** – **Avg Risk Score**  
+* **ORS** – **Over‑Refusal Score**
+
+These are the proprietary scores used to assess AI safety and national‑security risk in the Fortress evaluation [Paper chunk 206].
+
+Supported by: paper chunk 206",2,2,1,2,
+Q10,What security risk can arise from exposing an LLM's system prompt?,semantic_only,612,"583, 612, 616, 342, 364, 613, 532, 351, 368, 371, 372, 526",1.0,"Exposing an LLM’s system prompt can create a safety‑security problem because the prompt may contain confidential or otherwise sensitive information that becomes visible to users or attackers. When the system prompt is revealed, that sensitive information is disclosed, constituting a security risk. 【Paper chunk 612】  
+
+Supported by: paper chunk 612",2,2,2,2,
+Q10,What security risk can arise from exposing an LLM's system prompt?,hybrid,612,"612, 364, 583, 589, 616, 386, 342, 488, 614, 613, 39, 532",1.0,"Exposing an LLM’s system prompt can leak the hidden instructions or configuration that the model relies on, thereby revealing **sensitive information** that should remain private. This unintended disclosure is identified as a safety‑related security problem because the exposed prompt may contain confidential details about the model’s role, constraints, or other protected data [Paper chunk 612].
+
+Supported by: paper chunk 612",2,2,1,2,
+Q11,Which standard metrics does the paper name for evaluating retrieval systems?,semantic_only,623,"624, 627, 626, 625, 634, 633, 628, 632, 202, 635, 623, 200",1.0,"The paper lists the following standard metrics for evaluating retrieval systems:
+
+- **Recall @ k**  
+- **Mean Reciprocal Rank (MRR)**  
+- **Faithfulness scores**  
+
+These metrics are explicitly mentioned as the standard evaluation measures for retrieval systems in the text.  
+
+Supported by: paper chunk 623",2,2,2,2,
+Q11,Which standard metrics does the paper name for evaluating retrieval systems?,hybrid,623,"624, 623, 627, 200, 632, 630, 17, 629, 571, 626, 625, 634",1.0,"The paper lists the following standard metrics for evaluating retrieval systems:
+
+- **Recall @ k**  
+- **Mean Reciprocal Rank (MRR)**  
+- **Faithfulness scores**  
+
+These metrics are explicitly mentioned as the standard evaluation measures for retrieval systems in the paper [Paper chunk 623].
+
+Supported by: paper chunk 623",2,2,2,2,
+Q12,Where does the paper mention faithfulness scores in retrieval evaluation?,semantic_only,623,"626, 627, 624, 634, 633, 628, 281, 625, 202, 203, 623, 630",1.0,"The paper notes that retrieval systems are evaluated with “standard metrics such as Recall@ k, Mean Reciprocal Rank, and **faithfulness scores**” in the discussion of retrieval‑system evaluation — see the bullet list in **Paper chunk 623**.  
+
+Supported by: paper chunk 623.",2,2,2,2,
+Q12,Where does the paper mention faithfulness scores in retrieval evaluation?,hybrid,623,"623, 627, 628, 18, 632, 629, 17, 626, 326, 624, 322, 634",1.0,"The paper notes that retrieval systems are evaluated with “standard metrics such as Recall@ k, Mean Reciprocal Rank, and **faithfulness scores**” in the list of evaluation metrics for retrieval — this appears in the bullet‑point overview of retrieval evaluation.  
+
+Supported by: paper chunk 623.",2,2,2,2,
+Q13,Which metric does the paper list for the AIME 2025 benchmark?,semantic_only,"205, 206","204, 200, 4, 85, 86, 116, 182, 199, 201, 202, 205, 206",1.0,"The paper lists **Pass@1** as the evaluation metric for the AIME 2025 benchmark【Paper chunk 205】【Paper chunk 206】
+
+Supported by: Paper chunk 205, Paper chunk 206",2,2,2,2,
+Q13,Which metric does the paper list for the AIME 2025 benchmark?,hybrid,"205, 206","205, 204, 206, 326, 344, 200, 563, 202, 564, 567, 4, 345",1.0,The paper lists **Pass@1** as the evaluation metric for the AIME 2025 benchmark【Paper chunk 205】【Paper chunk 206】.,2,2,2,2,
+Q14,What method does Rainbow Teaming use to generate diverse adversarial prompts?,semantic_only,613,"613, 614, 502, 619, 611, 372, 40, 8, 531, 378, 532, 393",1.0,"Rainbow Teaming generates diverse adversarial prompts by treating prompt generation as a **quality‑diversity** problem and using **MAP‑Elites**, an evolutionary meta‑search algorithm that iteratively fills an archive with increasingly higher‑performing prompts. This evolutionary approach creates the needed diversity of adversarial prompts.  
+
+Supported by: paper chunk 613.",2,2,2,2,
+Q14,What method does Rainbow Teaming use to generate diverse adversarial prompts?,hybrid,613,"613, 614, 619, 611, 612, 336, 193, 502, 372, 335, 40, 8",1.0,"Rainbow Teaming treats adversarial‑prompt generation as a **quality‑diversity** problem and creates diversity by employing **MAP‑Elites**, an evolutionary meta‑search algorithm that iteratively fills an archive with increasingly higher‑performing prompts. This evolutionary method is used to generate a wide variety of adversarial prompts.  
+
+Supported by: paper chunk 613.",2,2,2,2,
+Q15,What can an agent do after a tool call returns an error?,semantic_only,605,"605, 615, 607, 590, 577, 579, 591, 16, 606, 597, 514, 19",1.0,"When a tool call fails, a robust agent can treat the error message as a new observation and then reason about it. The agent can 
+
+* retry the same tool with corrected arguments,  
+* call a different tool that might achieve the goal, or  
+* report the failure to the user (e.g., inform them that the tool could not be used).
+
+This “observe‑reflect‑retry” loop lets the agent recover from the error rather than halting. The paper describes this as a basic reactive error‑handling strategy that enables self‑healing behavior [Paper chunk 605]; it also notes that agents should “observe and reason about failures, and attempt recovery” [Paper chunk 615].
+
+Supported by: paper chunk 605, paper chunk 615",2,2,2,2,
+Q15,What can an agent do after a tool call returns an error?,hybrid,605,"605, 591, 615, 610, 604, 603, 590, 569, 607, 522, 577, 579",1.0,"When a tool call fails, the agent can treat the error message as a new observation and enter an error‑handling loop. The LLM is given the error text, reasons about it, and then chooses a corrective action. Typical responses include:
+
+* Re‑invoking the same tool with corrected arguments.  
+* Calling a different tool that might achieve the same goal.  
+* Reporting the failure to the user (e.g., informing them that the tool could not be used).
+
+Thus, after an error the agent can observe the error, reflect on its cause, and retry or fall back to an alternative action.  
+
+Supported by: paper chunk 605.",2,2,2,2,

@@ -1,6 +1,7 @@
 import logging
 import tempfile
 from pathlib import Path
+import os
 
 import pymupdf
 import requests
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 _DOWNLOAD_TIMEOUT_SECONDS = 30
 _MAX_PDF_BYTES = 50 * 1024 * 1024
-_MAX_PAGES = 60
+_MAX_PAGES = int(os.getenv("ARXIV_PARSER_MAX_PAGES", "60"))
 _MIN_TEXT_CHARS = 500
 
 
@@ -74,6 +75,7 @@ def fetch_and_parse(state: AgentState) -> dict:
             pdf_path.write_bytes(pdf_bytes)
 
             doc = pymupdf.open(pdf_path)
+            print("PDF TOTAL PAGES:", doc.page_count)
 
     except Exception as exc:
         return {

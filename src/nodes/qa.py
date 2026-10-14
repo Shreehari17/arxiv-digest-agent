@@ -5,7 +5,7 @@ from src.prompts import (
 )
 from src.state import AgentState, QATurn
 from src.nodes.retrieval import (
-    retrieve_for_qa,
+    retrieve_for_qa_hybrid,
 )
 
 
@@ -30,10 +30,17 @@ def answer_question(
             f"Current question: {question}"
         )
 
-    chunks = retrieve_for_qa(
+    chunks = retrieve_for_qa_hybrid(
         vectorstore_ref,
         retrieval_question,
     )
+    print(f"[DEBUG] QA retrieved {len(chunks)} chunks")
+
+    for chunk in chunks:
+        print(
+            f"[DEBUG] Chunk {chunk['metadata'].get('chunk_index')} "
+            f"| distance={chunk['distance']:.4f}"
+        )
 
 
     if not chunks:
@@ -181,6 +188,7 @@ def qa_loop(state: AgentState) -> dict:
     )
 
     vectorstore_ref = state["vectorstore_ref"]
+    print(f"\n[DEBUG] QA collection: {vectorstore_ref}")
 
     turn = answer_question(
         question=user_input,
