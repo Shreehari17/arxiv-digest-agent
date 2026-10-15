@@ -39,11 +39,13 @@ class AgentState(TypedDict, total=False):
     user_input: str
     intent: Optional[Literal["topic", "paper_id"]]
     parsed_query: Optional[str]
+    next_action: str
 
-    briefing: Optional[Briefing]
+    
     candidates: list[PaperMeta]
     selected_paper: Optional[PaperMeta]
-    next_action: str
+    briefing: Optional[Briefing]
+    
     
     raw_text: Optional[str]
     parse_ok: bool
@@ -54,6 +56,7 @@ class AgentState(TypedDict, total=False):
     chunk_count: int
     embed_ok: bool
     retrieved_chunks: list[dict]
+    
     conversation_history: list[QATurn]
     continue_qa: bool
     last_answer: Optional[str]
